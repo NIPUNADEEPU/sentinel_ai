@@ -38,7 +38,7 @@ An Autonomous Human-in-the-Loop Security Operations Agent built using Google's A
 
 \### Phase 4: Day 4 Evaluation Dashboard \& Day 5 Deployment Simulation
 
-\- \[ ] Build defensive metrics logging tracking prompt injection blocks and false-positive rates.
+\- \[x] Build defensive metrics logging tracking prompt injection blocks and false-positive rates.
 
-\- \[ ] Script the simulated rollout engine targeting Google Cloud Run with circuit-breaking self-healing rollback automation.
+\- \[x] Script the simulated rollout engine targeting Google Cloud Run with circuit-breaking self-healing rollback automation.
 
