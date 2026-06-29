@@ -1,0 +1,9 @@
+# Ignore local environment variables & keys
+.env
+config_local.py
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
