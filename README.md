@@ -16,3 +16,15 @@ SentinelAI acts as an isolated sandbox guardrail that intercept scripts using St
    ```bash
    git clone [https://github.com/NIPUNADEEPU/sentinel_ai.git](https://github.com/NIPUNADEEPU/sentinel_ai.git)
    cd sentinel_ai
+Install System Dependencies:
+
+Bash
+pip install fastapi uvicorn streamlit requests pydantic
+Start the FastAPI Backend Server Layer:
+
+Bash
+uvicorn app:app --reload
+Launch the Real-Time Streamlit Operations Interface:
+
+Bash
+streamlit run dashboard.py
