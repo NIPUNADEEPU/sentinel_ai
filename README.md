@@ -30,7 +30,7 @@ pip install fastapi uvicorn streamlit requests pydantic google-genai
 SentinelAI requires an active Gemini API key to run its cognitive evaluation nodes. Create a config.py file in your root folder (or ensure your environment variable is set):
 
 Python
-# Inside your local config.py or environment configuration
+#Inside your local config.py or environment configuration
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 
 ### 4. Start the FastAPI Backend Server Layer
