@@ -53,49 +53,41 @@ def native_security_scan(source_code: str) -> dict:
 
     return {"vulnerabilities": vulnerabilities, "risk_score": score_penalty}
 
-def security_analysis_node(state: SentinelState) -> SentinelState:
-    """Agent Node 1: Executes local tools and passes results to Gemini for reasoning."""
-    state.current_status = "Scanning Code Base..."
-    print(f"[*] {state.current_status}")
+def analyze_security_node(state: SentinelState) -> SentinelState:
+    print("[*] Running Multilayered Security Inspection Engine...")
     
-    # 1. Run the native tool first
-    tool_results = native_security_scan(state.source_code)
-    state.vulnerabilities_found = tool_results["vulnerabilities"]
-    base_score = tool_results["risk_score"]
+    # Run Pattern Matching Engine Skills
+    scan_metrics = scan_code_base(state.source_code)
+    state.risk_score = scan_metrics["score"]
     
-    # 2. Use Gemini for deeper semantic reasoning
-    prompt = f"""
-    Analyze the following Python source code for security flaws.
-    CODE:
+    # Prepare Deep Semantic Assessment via Gemini
+    analysis_prompt = f"""
+    You are an Elite Enterprise DevSecOps Agent. Analyze this source code payload for compliance risks.
+    
+    DETERMINISTIC ANALYSIS FLAGS IDENTIFIED:
+    {", ".join(scan_metrics["flags"]) if scan_metrics["flags"] else "None"}
+    
+    SOURCE CODE ENVELOPE:
     {state.source_code}
     
-    CURRENT TOOL FINDINGS: {state.vulnerabilities_found}
-    
-    Provide a concise Markdown risk report.
+    Provide a highly technical markdown report identifying vulnerabilities, explaining attacker intent, and detailing immediate remediation steps.
     """
     
     try:
-        # We skip calling Gemini if no API key is provided so the script doesn't crash during basic tests
-        if config.GEMINI_API_KEY:
-            response = ai_client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=prompt,
-            )
-            state.scan_report = response.text
-            print("[*] Gemini semantic analysis complete.")
-        else:
-            state.scan_report = "Mocked AI report (Missing API Key)."
+        gemini_model = Gemini(model="gemini-2.0-flash")
+        ai_response = gemini_model.generate(analysis_prompt)
+        state.ai_report = ai_response.text
     except Exception as e:
-        state.scan_report = f"AI Analysis failed: {e}"
-        
-    state.risk_score = min(base_score + 10, 100) # Added +10 to simulate Gemini finding edge-case issues
-    
-    if state.risk_score >= config.HIGH_RISK_THRESHOLD:
-        state.risk_level = "CRITICAL" if state.risk_score >= 80 else "HIGH"
-    elif state.risk_score >= config.MEDIUM_RISK_THRESHOLD:
-        state.risk_level = "MEDIUM"
+        # If Gemini fails, we explicitly build the report using our local findings!
+        state.ai_report = f"### ⚠️ Heuristic Threat Alert (Gemini API Offline/Quota)\n\nOur deterministic engine intercepted signature anomalies before the AI layer container execution.\n\n**Identified Anomalies:**\n" + "\n".join([f"- {flag}" for flag in scan_metrics["flags"]])
+
+    # Force the state status update here based on the score!
+    if state.risk_score >= 50:
+        state.risk_level = "HIGH"
+        state.current_status = "⏸️ Blocked: Awaiting Senior Security Approval"
     else:
         state.risk_level = "LOW"
+        state.current_status = "Deploying to sentinel-ai-sandbox Cloud Run..."
         
     return state
 
