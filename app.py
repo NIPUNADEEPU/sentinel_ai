@@ -36,14 +36,14 @@ def analyze_code_payload(request: CodeUploadRequest):
         routing_decision = "human_triage_path"
         state.risk_level = "HIGH"
         state.risk_score = 92
-        state.scan_report = "⚠️ Heuristic Threat Alert (Deterministic Engine Match)\nAnomalies were intercepted prior to container compilation.\nIdentified Structural Flags:\n⚠️ HIGH RISK: Spyware/Surveillance Indicators (Keylogging or Active Screen Grab Data Exfiltration)"
+        state.scan_report = "### ⚠️ Heuristic Threat Alert (Deterministic Engine Match)\n\nAnomalies were intercepted prior to container compilation.\n\n**Identified Structural Flags:**\n- ⚠️ HIGH RISK: Spyware/Surveillance Indicators (Keylogging or Active Screen Grab Data Exfiltration)"
+        state.ai_report = state.scan_report
 
     if routing_decision == "human_triage_path" or state.risk_level in ["HIGH", "CRITICAL"]:
         state.current_status = "⏸️ Blocked: Awaiting Senior Security Review Override"
         state.waiting_for_input = True
     else:
         state = deploy_and_monitor_node(state)
-        state.current_status = "✅ System Live and Verified Healthy."
         state.waiting_for_input = False
         
     state_store[scan_id] = state
